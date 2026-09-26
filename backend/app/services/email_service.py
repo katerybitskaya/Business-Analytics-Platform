@@ -6,7 +6,7 @@ from app.config import get_settings
 settings = get_settings()
 
 
-async def send_password_reset_email(to_email: str, reset_link: str, language: str = "PL") -> None:
+async def send_password_reset_email(to_email: str, reset_link: str, language: str = "EN") -> None:
     subject_by_lang = {
         "EN": "Password reset — Business Analytics Platform",
         "PL": "Resetowanie hasła — Business Analytics Platform",

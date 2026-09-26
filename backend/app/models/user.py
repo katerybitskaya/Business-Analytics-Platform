@@ -18,7 +18,7 @@ class User(Base):
     first_name: Mapped[str] = mapped_column(Text, nullable=False)
     last_name: Mapped[str] = mapped_column(Text, nullable=False)
     photo: Mapped[str | None] = mapped_column(Text, nullable=True)
-    language: Mapped[str] = mapped_column(Text, nullable=False, default="PL")
+    language: Mapped[str] = mapped_column(Text, nullable=False, default="EN")
     theme: Mapped[str] = mapped_column(Text, nullable=False, default="system")
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
