@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -29,7 +29,7 @@ services:
   frontend:
     build: ../frontend
     ports:
-      - "80:80"
+      - "8080:80"   # 8080 на хосте: порт 80 занят Apache
     depends_on:
       - backend
     restart: unless-stopped

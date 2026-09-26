@@ -11,7 +11,7 @@ sudo apt update && sudo apt install -y docker.io docker-compose-plugin
 ```
 
 ```bash
-cd new_project/docker
+cd swot/docker
 cp postgres.env.example .env                          # заполнить POSTGRES_*
 cp backend.env.docker.example backend.env.docker       # заполнить реальными значениями
 ```
@@ -24,19 +24,23 @@ sudo docker compose up -d --build
 
 Гость (`guest`/`guest12345`) и все эталонные примеры создаются автоматически при первом старте backend — вручную запускать `seed_guest.py` не нужно.
 
-Приложение доступно на `http://<IP сервера>` (порт 80).
+Приложение доступно на `http://<IP сервера>:8080` (порт 8080 — чтобы не конфликтовать с Apache на 80).
+
+> Образы: PostgreSQL 17, Python 3.12 — как на VPS. Если раньше уже запускался вариант
+> с PostgreSQL 16, старый volume с базой 17-я версия не откроет: сделать дамп, затем
+> `sudo docker compose down -v` (удалит данные!) и восстановить дамп в новый контейнер.
 
 ## После изменений в коде
 
 ```bash
-cd new_project/docker
+cd swot/docker
 sudo docker compose up -d --build
 ```
 
 ## Полезное
 
 ```bash
-cd new_project/docker
+cd swot/docker
 sudo docker compose logs -f backend    # логи backend (плюс файлы в ../logs — они смонтированы с хоста)
 sudo docker compose logs -f frontend
 sudo docker compose ps

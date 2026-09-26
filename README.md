@@ -59,7 +59,7 @@ cd docker
 cp postgres.env.example .env                       # fill in POSTGRES_*
 cp backend.env.docker.example backend.env.docker    # fill in real values
 
-docker compose up -d --build      # http://<server IP>:80
+docker compose up -d --build      # http://<server IP>:8080
 ```
 
 The guest account and demo data are created automatically on the backend's first start.
