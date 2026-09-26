@@ -36,6 +36,38 @@ A web platform for business-analytics calculations. The user starts an analysis 
 - Docker / docker-compose
 - Nginx (production frontend build + `/api` proxy)
 
+## Project Structure
+
+```
+swot/
+├── backend/                # FastAPI application
+│   ├── app/
+│   │   ├── main.py         # App entry point, routers, CORS, static /uploads
+│   │   ├── config.py       # Settings from .env (pydantic-settings)
+│   │   ├── models/         # SQLAlchemy models
+│   │   ├── schemas/        # Pydantic schemas
+│   │   ├── repositories/   # Database access
+│   │   ├── services/       # Business logic, calculations, Excel export, e-mail
+│   │   ├── routers/        # API endpoints (/api/auth, /api/users, /api/analyses/*, /api/ws)
+│   │   ├── middleware/     # Auth, logging, rate limiting
+│   │   ├── core/           # Logging config, WebSocket manager
+│   │   ├── data/           # SWOT industry questionnaires
+│   │   └── scripts/        # Guest account & demo data seeding
+│   ├── alembic/            # Database migrations
+│   ├── uploads/            # User avatars (not in repository)
+│   ├── requirements.txt
+│   └── .env.example        # Template for .env.local
+├── frontend/               # React + TypeScript (Vite)
+│   └── src/
+│       ├── pages/          # Auth, Dashboard, Profile, Settings, ResetPassword, analyses/*
+│       ├── components/     # Layout, Toast, GuidePanel, shared UI
+│       ├── api/            # API client
+│       ├── context/, hooks/, i18n/   # Auth state, hooks, EN/PL/RU translations
+│       └── styles/         # Global styles
+├── docker/                 # docker-compose.yml + env templates
+└── db_schema.sql           # Reference database schema
+```
+
 ## Run without Docker
 
 ```bash
