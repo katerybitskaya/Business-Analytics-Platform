@@ -111,7 +111,7 @@ class AuthService:
         expires_at = datetime.now(timezone.utc) + timedelta(hours=1)
         await self.users.create_password_reset_token(user.id, token, expires_at)
 
-        reset_link = f"{settings.frontend_base_url}/reset-password.html?token={token}"
+        reset_link = f"{settings.frontend_base_url}/reset-password?token={token}"
         try:
             await send_password_reset_email(
                 user.email, reset_link,
