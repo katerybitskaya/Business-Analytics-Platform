@@ -26,3 +26,5 @@ backend/exports/
 backend/uploads/
 
 STRUCTURE.md
+docker/info/
+desktop-app/info/

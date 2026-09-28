@@ -56,7 +56,7 @@ swot/
 │   ├── alembic/            # Database migrations
 │   ├── uploads/            # User avatars (not in repository)
 │   ├── requirements.txt
-│   └── .env.example        # Template for .env.local
+│   └── .env.example        # Template for .env
 ├── frontend/               # React + TypeScript (Vite)
 │   └── src/
 │       ├── pages/          # Auth, Dashboard, Profile, Settings, ResetPassword, analyses/*
@@ -65,6 +65,13 @@ swot/
 │       ├── context/, hooks/, i18n/   # Auth state, hooks, EN/PL/RU translations
 │       └── styles/         # Global styles
 ├── docker/                 # docker-compose.yml + env templates
+├── desktop-app/            # Windows desktop version (.exe)
+│   ├── desktop_app.py      # Starts the backend locally and opens it in a window
+│   ├── sqlite_compat.py    # Runs the PostgreSQL models on SQLite
+│   ├── build.spec          # PyInstaller build config
+│   ├── requirements.txt
+│   ├── .env.desktop.example  # Settings template (copied on first run)
+│   └── assets/icon.ico
 └── db_schema.sql           # Reference database schema
 ```
 
@@ -74,7 +81,7 @@ swot/
 # backend
 cd backend
 pip install -r requirements.txt
-cp .env.example .env.local        # fill in DATABASE_URL, JWT_SECRET_KEY
+cp .env.example .env              # fill in DATABASE_URL, JWT_SECRET_KEY
 alembic upgrade head
 uvicorn app.main:app --reload --port 8000
 
@@ -95,3 +102,24 @@ docker compose up -d --build      # http://<server IP>:8080
 ```
 
 The guest account and demo data are created automatically on the backend's first start.
+
+## Desktop app (Windows)
+
+A standalone `.exe` version of the platform: the same backend and frontend, running locally and shown in its own window instead of a browser. It uses SQLite, so no PostgreSQL setup is needed — the database and settings are created automatically on first run in `%LOCALAPPDATA%\BusinessAnalyticsPlatform`.
+
+**Tools:** Python, FastAPI + Uvicorn, SQLite (aiosqlite), pywebview (WebView2), PyInstaller.
+
+**Build** (Windows 10/11, Python 3.11+, Node.js):
+
+```bash
+cd frontend
+npm install
+npm run build
+
+cd ../desktop-app
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+python desktop_app.py      # test run
+pyinstaller build.spec     # -> dist/BusinessAnalyticsPlatform.exe
+```

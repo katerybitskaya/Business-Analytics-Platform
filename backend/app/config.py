@@ -1,11 +1,26 @@
 import os
 from functools import lru_cache
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+BACKEND_DIR = Path(__file__).resolve().parent.parent
+
+
+def _env_file() -> str:
+    """ENV_FILE (если задан), иначе первый существующий: .env.local → .env → .env.vps (в папке backend/)."""
+    explicit = os.getenv("ENV_FILE")
+    if explicit:
+        return explicit
+    for name in (".env.local", ".env", ".env.vps"):
+        path = BACKEND_DIR / name
+        if path.is_file():
+            return str(path)
+    return str(BACKEND_DIR / ".env")
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=os.getenv("ENV_FILE", ".env.local"),
+        env_file=_env_file(),
         env_file_encoding="utf-8",
         extra="ignore",
     )
