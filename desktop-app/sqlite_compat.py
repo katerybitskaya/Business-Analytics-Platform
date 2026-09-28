@@ -47,13 +47,6 @@ class SqliteUUIDList(TypeDecorator):
 
 
 def apply() -> None:
-    """Make the unmodified backend models (written for Postgres) work on SQLite.
-
-    Patches sqlalchemy.dialects.postgresql.UUID/JSONB and sqlalchemy.ARRAY in
-    place, before the backend package is imported, so `from
-    sqlalchemy.dialects.postgresql import UUID, JSONB` inside app/models/*.py
-    picks up SQLite-compatible replacements without any change to backend/.
-    """
     import sqlalchemy.dialects.postgresql as pg
 
     pg.UUID = lambda *a, **kw: SqliteUUID()
