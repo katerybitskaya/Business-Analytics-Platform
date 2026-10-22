@@ -1,9 +1,6 @@
 import type { ReactNode, SVGProps } from 'react';
 
-/*
- * Classic outline icon set (paths follow Lucide, ISC licence).
- * All icons: 24×24 grid, 2px stroke, round caps, colour = currentColor.
- */
+/* Icon paths follow Lucide (ISC licence). */
 
 export type IconProps = SVGProps<SVGSVGElement> & { size?: number };
 
@@ -26,8 +23,6 @@ function Svg({ size = 18, children, style, ...rest }: IconProps & { children: Re
     </svg>
   );
 }
-
-/* ── Brand / navigation ─────────────────────────────────── */
 
 export const IconLogo = (p: IconProps) => (
   <Svg {...p}>
@@ -93,8 +88,6 @@ export const IconChevronRight = (p: IconProps) => (<Svg {...p}><path d="m9 18 6-
 export const IconChevronDown  = (p: IconProps) => (<Svg {...p}><path d="m6 9 6 6 6-6" /></Svg>);
 export const IconChevronUp    = (p: IconProps) => (<Svg {...p}><path d="m18 15-6-6-6 6" /></Svg>);
 
-/* ── Analyses (dashboard cards) ─────────────────────────── */
-
 export const IconSwot = (p: IconProps) => (
   <Svg {...p}>
     <rect width="7" height="7" x="3" y="3" rx="1" />
@@ -158,8 +151,6 @@ export const IconAudit = (p: IconProps) => (
     <path d="m9 14 2 2 4-4" />
   </Svg>
 );
-
-/* ── Actions / status ───────────────────────────────────── */
 
 export const IconLightbulb = (p: IconProps) => (
   <Svg {...p}>

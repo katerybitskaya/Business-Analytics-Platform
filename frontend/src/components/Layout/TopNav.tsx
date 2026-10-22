@@ -18,7 +18,6 @@ export function TopNav() {
   const { showToast } = useToast();
   const [theme, setTheme] = useState<Theme>(getCurrentTheme());
 
-  // First visit in this browser: take the theme saved in the account.
   useEffect(() => {
     if (!user || getStoredTheme()) return;
     const serverTheme: Theme = user.theme === 'light' ? 'light' : 'dark';

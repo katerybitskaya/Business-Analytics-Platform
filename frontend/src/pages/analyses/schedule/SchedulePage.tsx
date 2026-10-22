@@ -284,7 +284,6 @@ export default function SchedulePage() {
       labelWRef.current = newW;
       cont.querySelectorAll<HTMLElement>('.gantt-col-label').forEach(el => { el.style.width = newW + 'px'; });
       cont.querySelectorAll<HTMLElement>('.gantt-label').forEach(el => { el.style.width = newW + 'px'; });
-      // redraw arrows + today line in the same frame so they move together with the bars
       if (!rafId) {
         rafId = requestAnimationFrame(() => {
           rafId = 0;

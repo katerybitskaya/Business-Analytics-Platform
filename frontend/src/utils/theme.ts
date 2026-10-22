@@ -2,7 +2,6 @@ export type Theme = 'dark' | 'light';
 
 const STORAGE_KEY = 'theme';
 
-/** Theme saved in this browser, or null if the user never picked one here. */
 export function getStoredTheme(): Theme | null {
   try {
     const v = localStorage.getItem(STORAGE_KEY);
@@ -12,7 +11,6 @@ export function getStoredTheme(): Theme | null {
   }
 }
 
-/** Theme currently applied to the page (dark is the default in main.css). */
 export function getCurrentTheme(): Theme {
   return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
 }
