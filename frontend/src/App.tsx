@@ -1,7 +1,6 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { useNotificationSocket } from '@/hooks/useNotificationSocket';
 import { ProtectedRoute } from '@/components/Layout/ProtectedRoute';
 import { TopNav } from '@/components/Layout/TopNav';
 import { Sidebar } from '@/components/Layout/Sidebar';
@@ -56,7 +55,6 @@ export default function App() {
   useLang();
   const { user, loading } = useAuth();
   const location = useLocation();
-  useNotificationSocket();
   useEffect(() => {
     if (import.meta.env.DEV) {
       console.log('%c[Nav]', 'color:#9c7ef7;font-weight:bold', location.pathname);

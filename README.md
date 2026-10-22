@@ -48,9 +48,9 @@ swot/
 │   │   ├── schemas/        # Pydantic schemas
 │   │   ├── repositories/   # Database access
 │   │   ├── services/       # Business logic, calculations, Excel export, e-mail
-│   │   ├── routers/        # API endpoints (/api/auth, /api/users, /api/analyses/*, /api/ws)
+│   │   ├── routers/        # API endpoints (/api/auth, /api/users, /api/analyses/*)
 │   │   ├── middleware/     # Auth, logging, rate limiting
-│   │   ├── core/           # Logging config, WebSocket manager
+│   │   ├── core/           # Logging config
 │   │   ├── data/           # SWOT industry questionnaires
 │   │   └── scripts/        # Guest account & demo data seeding
 │   ├── alembic/            # Database migrations
@@ -62,7 +62,7 @@ swot/
 │       ├── pages/          # Auth, Dashboard, Profile, Settings, ResetPassword, analyses/*
 │       ├── components/     # Layout, Toast, GuidePanel, shared UI
 │       ├── api/            # API client
-│       ├── context/, hooks/, i18n/   # Auth state, hooks, EN/PL/RU translations
+│       ├── context/, i18n/   # Auth state, EN/PL/RU translations
 │       └── styles/         # Global styles
 ├── docker/                 # docker-compose.yml + env templates
 ├── desktop-app/            # Windows desktop version (.exe)

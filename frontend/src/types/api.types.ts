@@ -28,11 +28,13 @@ export interface User {
   first_name: string | null;
   last_name: string | null;
   photo: string | null;
+  theme?: 'dark' | 'light' | string;
   profile: UserProfile | null;
 }
 export interface UpdateAccountData {
   first_name?: string;
   last_name?: string;
+  theme?: 'dark' | 'light';
 }
 export interface UpdateProfileData {
   company_name?: string | null;

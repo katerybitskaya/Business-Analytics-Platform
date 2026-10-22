@@ -1,48 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { Api } from '@/api/api';
 import { t } from '@/i18n/i18n';
 
-import { IconMoon, IconSun } from '@/components/Icons';
-function applyTheme(theme: string) {
-  document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('theme', theme);
-}
-
 export default function SettingsPage() {
   const { logout } = useAuth();
   const { showToast } = useToast();
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
   const [oldPass, setOldPass] = useState('');
   const [newPass, setNewPass] = useState('');
-
-  useEffect(() => {
-    Api.me().then(u => {
-      const serverTheme = (u as any).theme === 'light' ? 'light' : 'dark';
-      const localTheme = localStorage.getItem('theme');
-      if (!localTheme) {
-        applyTheme(serverTheme);
-        setTheme(serverTheme);
-      } else {
-        setTheme(localTheme === 'light' ? 'light' : 'dark');
-      }
-    }).catch(() => {
-      const localTheme = localStorage.getItem('theme');
-      if (localTheme) setTheme(localTheme === 'light' ? 'light' : 'dark');
-    });
-  }, []);
-
-  async function switchTheme(th: string) {
-    applyTheme(th);
-    setTheme(th);
-    try {
-      await Api.updateAccount({ theme: th } as any);
-    } catch (e) {
-      console.error('[switchTheme] API error:', e);
-      showToast(t('settings.theme_not_saved'), 'error');
-    }
-  }
 
   async function handleChangePassword() {
     if (newPass.length < 8) { showToast(t('settings.pass_too_short'), 'error'); return; }
@@ -84,24 +50,6 @@ export default function SettingsPage() {
         <button className="btn btn-primary" id="changePasswordBtn" onClick={handleChangePassword}>
           {t('settings.save_pass_btn')}
         </button>
-      </div>
-
-      <div className="card" style={{ marginTop: 20, maxWidth: 640 }}>
-        <h3 id="settingsThemeTitle">{t('settings.theme_title')}</h3>
-        <p style={{ color: 'var(--text-secondary)', fontSize: 13, marginBottom: 12 }} id="settingsThemeDesc">
-          {t('settings.theme_desc_lbl')}
-        </p>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <button className="btn btn-secondary" id="themeDarkBtn" style={{ flex: 1 }} onClick={() => switchTheme('dark')}>
-            <IconMoon size={16} />{t('settings.dark_btn')}
-          </button>
-          <button className="btn btn-secondary" id="themeLightBtn" style={{ flex: 1 }} onClick={() => switchTheme('light')}>
-            <IconSun size={16} />{t('settings.light_btn')}
-          </button>
-        </div>
-        <p id="themeCurrentLabel" style={{ color: 'var(--text-secondary)', fontSize: 12, marginTop: 8 }}>
-          {t(theme === 'light' ? 'settings.theme_current_light' : 'settings.theme_current_dark')}
-        </p>
       </div>
 
       <div className="card" style={{ marginTop: 20, maxWidth: 640, borderColor: 'var(--danger)' }}>

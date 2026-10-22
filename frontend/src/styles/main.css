@@ -240,6 +240,23 @@ p  { margin: 0; }
 .topnav-right { display: flex; align-items: center; gap: 10px; }
 .topnav-user  { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
 
+.topnav-theme {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 26px;
+    padding: 0;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.topnav-theme:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
 .topnav-lang { display: flex; gap: 4px; }
 .topnav-lang button {
     background: none;
@@ -749,11 +766,6 @@ input[type="range"] { accent-color: var(--accent); cursor: pointer; }
     outline: none;
 }
 
-.page-wrap { padding: 24px 32px; }
-@media (max-width: 900px) {
-    .page-wrap { padding: 16px; }
-}
-
 .profile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; min-width: 0; }
 @media (max-width: 700px) {
     .profile-grid { grid-template-columns: 1fr; }
@@ -785,6 +797,19 @@ input[type="range"] { accent-color: var(--accent); cursor: pointer; }
     .quick-card-icon { width: 44px; height: 44px; border-radius: 12px; margin-bottom: 8px; }
     .quick-card h3 { font-size: 13px; }
     .quick-card p { font-size: 10px; }
+}
+
+@media (max-width: 480px) {
+    .topnav { padding: 0 12px; gap: 8px; }
+    .topnav-logo { font-size: 15px; gap: 8px; min-width: 0; }
+    .topnav-logo-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .brand-mark { width: 28px; height: 28px; }
+    .topnav-right { gap: 6px; }
+    .topnav-lang { gap: 3px; }
+    .topnav-lang button { padding: 3px 6px; }
+}
+@media (max-width: 360px) {
+    .topnav-logo-text { display: none; }
 }
 
 @media (max-width: 420px) {

@@ -12,7 +12,7 @@ from app.core.logging_config import setup_logging
 from app.database import AsyncSessionLocal
 from app.middleware.logging_middleware import RequestLoggingMiddleware
 from app.middleware.rate_limit_middleware import RateLimitMiddleware
-from app.routers import abc_xyz, audyt, auth, eisenhower, punktowa, schedule, swot, users, ws
+from app.routers import abc_xyz, audyt, auth, eisenhower, punktowa, schedule, swot, users
 from app.routers import logs as client_logs
 
 logger = logging.getLogger(__name__)
@@ -46,7 +46,6 @@ app.include_router(schedule.router, prefix="/api/analyses/schedule", tags=["sche
 app.include_router(punktowa.router, prefix="/api/analyses/punktowa", tags=["punktowa"])
 app.include_router(audyt.router, prefix="/api/analyses/audyt", tags=["audyt"])
 app.include_router(client_logs.router, prefix="/api/logs", tags=["logs"])
-app.include_router(ws.router, prefix="/api/ws", tags=["ws"])
 
 os.makedirs("uploads/avatars", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
@@ -58,7 +57,6 @@ async def health_check() -> dict[str, str]:
 
 
 async def _guest_reset_loop() -> None:
-    from app.core.ws_manager import manager
     from app.scripts.seed_guest import reset_guest_data
 
     while True:
@@ -69,7 +67,6 @@ async def _guest_reset_loop() -> None:
             async with AsyncSessionLocal() as db:
                 user = await reset_guest_data(db)
             logger.info("guest_reset_completed user_id=%s", user.id)
-            await manager.send_to_user(user.id, {"type": "guest_reset"})
         except Exception:
             logger.exception("guest_reset_failed")
 
