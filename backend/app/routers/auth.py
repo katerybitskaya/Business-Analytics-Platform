@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.middleware.auth_middleware import get_current_user
+from app.middleware.rate_limit_middleware import check_login_attempt
 from app.models.user import User
 from app.schemas.user import (
     PasswordChange,
@@ -28,6 +29,12 @@ async def register(data: UserRegister, db: AsyncSession = Depends(get_db)):
 
 @router.post("/login", response_model=TokenPair)
 async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
+    if not check_login_attempt(data.login):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="too_many_requests",
+            headers={"Retry-After": "60"},
+        )
     service = AuthService(db)
     user = await service.authenticate(data)
     return await service.issue_tokens(user)

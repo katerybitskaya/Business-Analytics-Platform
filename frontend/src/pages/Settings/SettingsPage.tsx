@@ -68,7 +68,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="page-wrap">
+    <div>
       <h1 className="page-title" id="settingsPageTitle">{t('settings.page_title')}</h1>
 
       <div className="card" style={{ marginTop: 20, maxWidth: 640 }}>

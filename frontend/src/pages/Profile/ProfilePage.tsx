@@ -121,7 +121,7 @@ export default function ProfilePage() {
     : '\xB7\xB7';
 
   return (
-    <div className="page-wrap">
+    <div>
       <h1 className="page-title">{t('profile.page_title')}</h1>
 
       <div className="profile-grid" style={{ alignItems: 'start' }}>

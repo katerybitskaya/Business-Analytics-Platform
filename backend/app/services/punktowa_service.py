@@ -94,7 +94,7 @@ class PunktowaService(AnalysisService):
 
         ranked = sorted(
             raw_results,
-            key=lambda r: (-round(r["percentage"], 2), -r["avg_weighted"], r["subject_name"]),
+            key=lambda r: (-round(r["percentage"], 2), -round(r["avg_weighted"], 4), r["subject_name"]),
         )
         for i, r in enumerate(ranked, start=1):
             r["rank"] = i
