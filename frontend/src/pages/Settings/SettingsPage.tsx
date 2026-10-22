@@ -4,6 +4,7 @@ import { useToast } from '@/context/ToastContext';
 import { Api } from '@/api/api';
 import { t } from '@/i18n/i18n';
 
+import { IconMoon, IconSun } from '@/components/Icons';
 function applyTheme(theme: string) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('theme', theme);
@@ -92,10 +93,10 @@ export default function SettingsPage() {
         </p>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <button className="btn btn-secondary" id="themeDarkBtn" style={{ flex: 1 }} onClick={() => switchTheme('dark')}>
-            {t('settings.dark_btn')}
+            <IconMoon size={16} />{t('settings.dark_btn')}
           </button>
           <button className="btn btn-secondary" id="themeLightBtn" style={{ flex: 1 }} onClick={() => switchTheme('light')}>
-            {t('settings.light_btn')}
+            <IconSun size={16} />{t('settings.light_btn')}
           </button>
         </div>
         <p id="themeCurrentLabel" style={{ color: 'var(--text-secondary)', fontSize: 12, marginTop: 8 }}>

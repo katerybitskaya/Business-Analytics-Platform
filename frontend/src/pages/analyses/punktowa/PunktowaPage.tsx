@@ -9,6 +9,7 @@ import type { AnalysisOut } from '@/types/api.types';
 import { Chart, registerables } from 'chart.js';
 import EditableTitle from '@/components/EditableTitle';
 import { getDisplayTitle } from '@/utils/analysisTitle';
+import { IconDownload, IconX, IconStar } from '@/components/Icons';
 Chart.register(...registerables);
 
 type Section = 'list' | 'setup' | 'subjects' | 'scores' | 'results';
@@ -133,7 +134,7 @@ export default function PunktowaPage({ ptype }: { ptype: string }) {
   useEffect(() => {
     const id = setTimeout(() => {
       const el = document.querySelector('.main-content');
-      if (el) el.scrollTop = 0;
+      if (el) el.scrollTop = 0; window.scrollTo(0, 0);
     }, 0);
     return () => clearTimeout(id);
   }, [section]);
@@ -525,7 +526,7 @@ export default function PunktowaPage({ ptype }: { ptype: string }) {
                     />
                   </div>
                   <button className="btn btn-secondary" style={{ marginBottom: 0 }}
-                    onClick={() => setCriteria(prev => prev.filter((_, i) => i !== idx))}>✕</button>
+                    onClick={() => setCriteria(prev => prev.filter((_, i) => i !== idx))} aria-label="Remove"><IconX size={14} /></button>
                 </div>
               ))}
             </div>
@@ -582,7 +583,7 @@ export default function PunktowaPage({ ptype }: { ptype: string }) {
                     className="input" placeholder={t('punk.subject_ph')} value={s.name}
                     onChange={e => setSubjects(prev => prev.map((x, i) => i === idx ? { ...x, name: e.target.value } : x))}
                   />
-                  <button className="btn btn-secondary" onClick={() => setSubjects(prev => prev.filter((_, i) => i !== idx))}>✕</button>
+                  <button className="btn btn-secondary" onClick={() => setSubjects(prev => prev.filter((_, i) => i !== idx))} aria-label="Remove"><IconX size={14} /></button>
                 </div>
               ))}
             </div>
@@ -942,7 +943,7 @@ export default function PunktowaPage({ ptype }: { ptype: string }) {
                             {r.rank}
                           </td>
                           <td style={{ ...tdStyle, background: rowBg, fontWeight: isWinner ? 700 : 400 }}>
-                            {isWinner && <span style={{ marginRight: 6 }}>★</span>}{r.subject_name}
+                            {isWinner && <IconStar size={13} style={{ marginRight: 6, verticalAlign: '-2px', color: 'var(--warning)' }} />}{r.subject_name}
                           </td>
                           <td style={{ ...tdStyle, textAlign: 'center', background: rowBg }}>
                             {+Number(r.avg_arithmetic ?? 0).toFixed(2)}
@@ -1024,7 +1025,7 @@ export default function PunktowaPage({ ptype }: { ptype: string }) {
                   const item = list.find(a => a.id === analysisId);
                   Api.exportPunktowa(analysisId!, item?.title ? fileSlug(item.title, item.created_at) : undefined);
                 }}>
-                {t('common.export_excel')}
+                <IconDownload size={16} />{t('common.export_excel')}
               </button>
               <button className="btn btn-secondary" id="deleteBtn" style={{ color: 'var(--danger)' }}
                 onClick={async () => {

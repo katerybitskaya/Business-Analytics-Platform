@@ -9,6 +9,7 @@ import type { AnalysisOut, ScheduleTask } from '@/types/api.types';
 import EditableTitle from '@/components/EditableTitle';
 import { getDisplayTitle } from '@/utils/analysisTitle';
 
+import { IconDownload, IconX, IconCheck, IconLink } from '@/components/Icons';
 type Section = 'list' | 'board';
 
 const DRAFT_KEY = 'sched_draft';
@@ -132,7 +133,7 @@ export default function SchedulePage() {
     saveDraft({ analysisId, section });
   }, [analysisId, section]);
 
-  useEffect(() => { const t = setTimeout(() => { const el = document.querySelector('.main-content'); if (el) el.scrollTop = 0; }, 0); return () => clearTimeout(t); }, [section]);
+  useEffect(() => { const t = setTimeout(() => { const el = document.querySelector('.main-content'); if (el) el.scrollTop = 0; window.scrollTo(0, 0); }, 0); return () => clearTimeout(t); }, [section]);
 
   useEffect(() => {
     if (mountedRef.current) return;
@@ -246,6 +247,8 @@ export default function SchedulePage() {
               <div class="gantt-bar-resize" data-resize-id="${task.id}"></div>
             </div>
             <div class="gantt-bar-connector" data-connector-id="${task.id}"
+                 style="left:${leftPx - 7}px"></div>
+            <div class="gantt-bar-connector" data-connector-id="${task.id}"
                  style="left:${leftPx + widthPx - 7}px"></div>
           </div>
         </div>`;
@@ -274,6 +277,21 @@ export default function SchedulePage() {
     const handle = container.querySelector<HTMLElement>('#labelResizeHandle');
     if (!handle) return;
     const cont = container;
+    const h = handle;
+
+    let rafId = 0;
+    function applyWidth(newW: number) {
+      labelWRef.current = newW;
+      cont.querySelectorAll<HTMLElement>('.gantt-col-label').forEach(el => { el.style.width = newW + 'px'; });
+      cont.querySelectorAll<HTMLElement>('.gantt-label').forEach(el => { el.style.width = newW + 'px'; });
+      // redraw arrows + today line in the same frame so they move together with the bars
+      if (!rafId) {
+        rafId = requestAnimationFrame(() => {
+          rafId = 0;
+          drawDependencyArrows(tasksRef.current);
+        });
+      }
+    }
 
     handle.addEventListener('mousedown', (e: MouseEvent) => {
       e.preventDefault();
@@ -281,20 +299,7 @@ export default function SchedulePage() {
       const startW = labelWRef.current;
 
       function onMove(ev: MouseEvent) {
-        const newW = Math.max(60, Math.min(400, startW + ev.clientX - startX));
-        labelWRef.current = newW;
-        cont.querySelectorAll<HTMLElement>('.gantt-col-label').forEach(el => { el.style.width = newW + 'px'; });
-        cont.querySelectorAll<HTMLElement>('.gantt-label').forEach(el => { el.style.width = newW + 'px'; });
-        const svg = cont.querySelector<SVGSVGElement>('#depSvg');
-        if (svg) svg.style.width = (newW + timelineTotalDays.current * DAY_W) + 'px';
-        const todayLine = cont.querySelector<SVGLineElement>('.today-line');
-        if (todayLine) {
-          const todayMs = new Date().setHours(0, 0, 0, 0);
-          const todayOffset = Math.round((todayMs - timelineStartMs.current) / 86400000);
-          const x = String(newW + todayOffset * DAY_W + DAY_W / 2);
-          todayLine.setAttribute('x1', x);
-          todayLine.setAttribute('x2', x);
-        }
+        applyWidth(Math.max(60, Math.min(400, startW + ev.clientX - startX)));
       }
 
       function onUp() {
@@ -306,6 +311,32 @@ export default function SchedulePage() {
       document.addEventListener('mousemove', onMove);
       document.addEventListener('mouseup', onUp);
     });
+
+    handle.addEventListener('touchstart', (e: TouchEvent) => {
+      if (e.touches.length !== 1) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const startX = e.touches[0].clientX;
+      const startW = labelWRef.current;
+      h.classList.add('active');
+
+      function onTouchMove(ev: TouchEvent) {
+        ev.preventDefault();
+        applyWidth(Math.max(60, Math.min(400, startW + ev.touches[0].clientX - startX)));
+      }
+
+      function onTouchEnd() {
+        document.removeEventListener('touchmove', onTouchMove);
+        document.removeEventListener('touchend', onTouchEnd);
+        document.removeEventListener('touchcancel', onTouchEnd);
+        h.classList.remove('active');
+        renderGantt();
+      }
+
+      document.addEventListener('touchmove', onTouchMove, { passive: false });
+      document.addEventListener('touchend', onTouchEnd);
+      document.addEventListener('touchcancel', onTouchEnd);
+    }, { passive: false });
   }
 
 
@@ -767,10 +798,16 @@ export default function SchedulePage() {
                 value={taskTitle} onChange={e => setTaskTitle(e.target.value)} />
               <input className="input" id="taskResponsible" placeholder={t('sch.responsible_ph') || 'Responsible'}
                 value={taskResponsible} onChange={e => setTaskResponsible(e.target.value)} />
-              <input className="input" type="date" id="taskStart"
-                value={taskStart} onChange={e => setTaskStart(e.target.value)} />
-              <input className="input" type="date" id="taskEnd"
-                value={taskEnd} onChange={e => setTaskEnd(e.target.value)} />
+              <div className="sched-date-field">
+                <label className="sched-date-label" htmlFor="taskStart">{t('sch.th_start')}</label>
+                <input className="input" type="date" id="taskStart"
+                  value={taskStart} onChange={e => setTaskStart(e.target.value)} />
+              </div>
+              <div className="sched-date-field">
+                <label className="sched-date-label" htmlFor="taskEnd">{t('sch.th_end')}</label>
+                <input className="input" type="date" id="taskEnd"
+                  value={taskEnd} onChange={e => setTaskEnd(e.target.value)} />
+              </div>
               <button className="btn btn-primary" id="addTaskBtn" onClick={handleAddTask}>{t('common.add')}</button>
             </div>
           </div>
@@ -802,7 +839,7 @@ export default function SchedulePage() {
                 style={{ fontSize: 12, padding: '4px 10px', ...(connectMode ? { background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' } : {}) }}
                 onClick={() => connectMode ? exitConnectMode() : enterConnectMode()}
               >
-                {connectMode ? t('sch.connect_cancel') : t('sch.connect_btn')}
+                {connectMode ? <IconX size={14} /> : <IconLink size={14} />}{connectMode ? t('sch.connect_cancel') : t('sch.connect_btn')}
               </button>
             </div>
             <div id="ganttContainer" ref={ganttRef} className="gantt-wrap"
@@ -894,14 +931,14 @@ export default function SchedulePage() {
                           onClick={() => handleUpdateProgress(task.id, task.progress === 100 ? 0 : 100)}
                           style={{
                             padding: '4px 8px', borderRadius: 6, border: '1px solid',
-                            cursor: 'pointer', fontSize: 14, lineHeight: 1,
+                            cursor: 'pointer', fontSize: 14, lineHeight: 1, display: 'inline-flex', alignItems: 'center',
                             transition: 'background 0.15s, color 0.15s, border-color 0.15s',
                             background: task.progress === 100 ? 'rgba(62,207,142,0.15)' : 'transparent',
                             color: task.progress === 100 ? 'var(--success, #3ECF8E)' : 'var(--text-secondary)',
                             borderColor: task.progress === 100 ? 'var(--success, #3ECF8E)' : 'var(--border)',
                           }}
-                        >✓</button>
-                        <button className="btn btn-secondary" style={{ padding: '4px 8px' }} onClick={() => handleDeleteTask(task.id)}>✕</button>
+                        ><IconCheck size={14} /></button>
+                        <button className="btn btn-secondary" style={{ padding: '4px 8px' }} onClick={() => handleDeleteTask(task.id)} aria-label="Delete"><IconX size={14} /></button>
                       </div>
                     </td>
                   </tr>
@@ -914,7 +951,7 @@ export default function SchedulePage() {
           <div style={{ display: 'flex', gap: 8, marginTop: 20, flexWrap: 'wrap' }}>
             <button className="btn btn-secondary" id="exportBtn"
               onClick={() => Api.exportSchedule(analysisIdRef.current!, list.find(a => a.id === analysisIdRef.current)?.title ? fileSlug(list.find(a => a.id === analysisIdRef.current)!.title, list.find(a => a.id === analysisIdRef.current)!.created_at) : undefined)}>
-              {t('common.export_excel')}
+              <IconDownload size={16} />{t('common.export_excel')}
             </button>
             <button className="btn btn-secondary" id="deleteBtn" style={{ color: 'var(--danger)' }}
               onClick={async () => {

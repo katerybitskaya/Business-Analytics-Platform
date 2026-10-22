@@ -9,6 +9,7 @@ import type { AnalysisOut, EisenhowerTask } from '@/types/api.types';
 import EditableTitle from '@/components/EditableTitle';
 import { getDisplayTitle } from '@/utils/analysisTitle';
 
+import { IconDownload } from '@/components/Icons';
 type Section = 'list' | 'board';
 
 const DRAFT_KEY = 'eis_draft';
@@ -168,7 +169,7 @@ export default function EisenhowerPage() {
   }, [analysisId, section]);
 
   useEffect(() => {
-    const timer = setTimeout(() => { const el = document.querySelector('.main-content'); if (el) el.scrollTop = 0; }, 0);
+    const timer = setTimeout(() => { const el = document.querySelector('.main-content'); if (el) el.scrollTop = 0; window.scrollTo(0, 0); }, 0);
     return () => clearTimeout(timer);
   }, [section]);
 
@@ -444,7 +445,7 @@ export default function EisenhowerPage() {
           <div style={{ display: 'flex', gap: 8, marginTop: 20, flexWrap: 'wrap' }}>
             <button className="btn btn-secondary" id="exportBtn"
               onClick={() => Api.exportEisenhower(analysisId!, list.find(a => a.id === analysisId)?.title ? fileSlug(list.find(a => a.id === analysisId)!.title, list.find(a => a.id === analysisId)!.created_at) : undefined)}>
-              {t('common.export_excel')}
+              <IconDownload size={16} />{t('common.export_excel')}
             </button>
             <button className="btn btn-secondary" id="deleteBtn" style={{ color: 'var(--danger)' }}
               onClick={async () => {

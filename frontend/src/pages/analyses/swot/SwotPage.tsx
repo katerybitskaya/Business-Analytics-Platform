@@ -11,6 +11,7 @@ import type { AnalysisOut } from '@/types/api.types';
 import { Chart, registerables } from 'chart.js';
 import EditableTitle from '@/components/EditableTitle';
 import { getDisplayTitle } from '@/utils/analysisTitle';
+import { IconDownload, IconCheck, IconStar, IconChevronDown, IconChevronRight } from '@/components/Icons';
 Chart.register(...registerables);
 
 type Section = 'list' | 'questionnaire' | 'manual' | 'matrix' | 'results';
@@ -271,9 +272,9 @@ export default function SwotPage() {
     saveDraft({ analysisId, section });
   }, [analysisId, section]);
 
-  useEffect(() => { const t = setTimeout(() => { const el = document.querySelector('.main-content'); if (el) el.scrollTop = 0; }, 0); return () => clearTimeout(t); }, [section]);
-  useEffect(() => { const t = setTimeout(() => { const el = document.querySelector('.main-content'); if (el) el.scrollTop = 0; }, 0); return () => clearTimeout(t); }, [questPage]);
-  useEffect(() => { const t = setTimeout(() => { const el = document.querySelector('.main-content'); if (el) el.scrollTop = 0; }, 0); return () => clearTimeout(t); }, [pairIndex]);
+  useEffect(() => { const t = setTimeout(() => { const el = document.querySelector('.main-content'); if (el) el.scrollTop = 0; window.scrollTo(0, 0); }, 0); return () => clearTimeout(t); }, [section]);
+  useEffect(() => { const t = setTimeout(() => { const el = document.querySelector('.main-content'); if (el) el.scrollTop = 0; window.scrollTo(0, 0); }, 0); return () => clearTimeout(t); }, [questPage]);
+  useEffect(() => { const t = setTimeout(() => { const el = document.querySelector('.main-content'); if (el) el.scrollTop = 0; window.scrollTo(0, 0); }, 0); return () => clearTimeout(t); }, [pairIndex]);
 
   useEffect(() => {
     if (section !== 'results') {
@@ -713,7 +714,7 @@ export default function SwotPage() {
   const currentGrid = grids[currentPair] || Array(5).fill(null).map(() => Array(5).fill(0));
 
   return (
-    <div style={{ padding: '24px 32px', maxWidth: 1100 }}>
+    <div>
 
       {section === 'list' && (
         <section id="listSection">
@@ -789,7 +790,7 @@ export default function SwotPage() {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 20, flexWrap: 'wrap', gap: 10 }}>
-              <h2 style={{ margin: 0 }}>{t('swot.step1_title')}</h2>
+              <h1 style={{ margin: 0 }}>{t('swot.step1_title')}</h1>
               <button className="btn btn-secondary" id="toManualWeightsBtn" disabled={busy}
                 onClick={async () => {
                   if (busy) return;
@@ -876,7 +877,7 @@ export default function SwotPage() {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 20, flexWrap: 'wrap', gap: 10 }}>
-              <h2 style={{ margin: 0 }}>{t('swot.manual_step1_title')}</h2>
+              <h1 style={{ margin: 0 }}>{t('swot.manual_step1_title')}</h1>
               <button className="btn btn-secondary" id="toQuestionnaireBtn" disabled={busy}
                 onClick={async () => {
                   if (busy) return;
@@ -953,7 +954,7 @@ export default function SwotPage() {
               {pairIndex + 1} / {pairs.length} — {currentPair}
             </span>
           </div>
-          <h2 style={{ marginTop: 20, marginBottom: 2 }}>{t('swot.step2_title')}</h2>
+          <h1 style={{ marginTop: 20, marginBottom: 4 }}>{t('swot.step2_title')}</h1>
           <GuidePanel id="guideSwot2" titleKey="guide.swot.step2.title" descKey="guide.swot.step2.desc" rulesKeys={['guide.swot.step2.r1','guide.swot.step2.r2','guide.swot.step2.r3']} />
           <div className="card" style={{ marginTop: 12 }}>
             <h3 id="matrixPairTitle" style={{ margin: '0 0 10px 0', textAlign: 'center' }}>
@@ -987,7 +988,7 @@ export default function SwotPage() {
                             className={`cell-toggle${marked ? ' marked' : ''}`}
                             data-ri={ri} data-ci={ci}
                             onClick={() => toggleCell(currentPair, ri, ci)}>
-                            {marked ? '✓' : ''}
+                            {marked ? <IconCheck size={14} style={{ verticalAlign: 'middle' }} /> : ''}
                           </td>
                         );
                       })}
@@ -999,7 +1000,7 @@ export default function SwotPage() {
             <div className="criteria-panel">
               <button className="criteria-toggle" id="criteriaToggleBtn"
                 onClick={() => setCriteriaOpen(o => { const n = !o; try { localStorage.setItem('swot_criteria_open', n ? '1' : '0'); } catch {} return n; })}>
-                {criteriaOpen ? '▼' : '▶'} {t('swot.criteria_desc')}
+                {criteriaOpen ? <IconChevronDown size={14} style={{ verticalAlign: '-2px', marginRight: 6 }} /> : <IconChevronRight size={14} style={{ verticalAlign: '-2px', marginRight: 6 }} />}{t('swot.criteria_desc')}
               </button>
               <div className={`criteria-content${criteriaOpen ? ' open' : ''}`} id="criteriaContent">
                 <div className="criteria-list">
@@ -1085,7 +1086,7 @@ export default function SwotPage() {
             <div style={{ flex: 1, height: 1, background: 'var(--border)' }}></div>
           </div>
 
-          <div className="card" style={{ marginTop: 16, padding: '20px 24px' }}>
+          <div className="card swot-weights-card" style={{ marginTop: 16, padding: '20px 24px' }}>
             <h3 style={{ margin: '0 0 16px', fontSize: 14, fontWeight: 600, letterSpacing: 0.2, color: 'var(--text-secondary)' }}>{t('swot.criteria_title')}</h3>
             <div className="swot-criteria-flex" style={{ alignItems: 'flex-start' }}>
 
@@ -1110,10 +1111,10 @@ export default function SwotPage() {
 
                 return (
                   <div className="swot-criteria-left" style={{ overflowX: 'auto' }}>
-                    <table style={{ borderCollapse: 'collapse', width: '100%', tableLayout: 'fixed' }}>
+                    <table className="swot-weights-table" style={{ borderCollapse: 'collapse', width: '100%', tableLayout: 'fixed' }}>
                       <colgroup>
-                        <col style={{ width: '25%' }} /><col style={{ width: '25%' }} />
-                        <col style={{ width: '25%' }} /><col style={{ width: '25%' }} />
+                        <col className="col-name" /><col className="col-weight" />
+                        <col className="col-name" /><col className="col-weight" />
                       </colgroup>
                       <thead>
                         <tr>
@@ -1261,10 +1262,10 @@ export default function SwotPage() {
               });
             });
 
-            const th: React.CSSProperties = { padding: '5px 8px', border: '1px solid var(--border)', background: 'var(--th-bg)', fontWeight: 600, textAlign: 'center', fontSize: 12, whiteSpace: 'nowrap', color: 'var(--text-primary)', textTransform: 'none', letterSpacing: 'normal' };
-            const td: React.CSSProperties = { padding: '4px 8px', border: '1px solid var(--border)', textAlign: 'center', fontSize: 12 };
+            const th: React.CSSProperties = { padding: '5px 2px', border: '1px solid var(--border)', background: 'var(--th-bg)', fontWeight: 600, textAlign: 'center', fontSize: 12, whiteSpace: 'nowrap', color: 'var(--text-primary)', textTransform: 'none', letterSpacing: 'normal' };
+            const td: React.CSSProperties = { padding: '4px 2px', border: '1px solid var(--border)', textAlign: 'center', verticalAlign: 'middle', fontSize: 12, whiteSpace: 'nowrap' };
             const tdL: React.CSSProperties = { ...th };
-            const tdE: React.CSSProperties = { padding: '4px 8px', border: 'none', textAlign: 'center', fontSize: 12 };
+            const tdE: React.CSSProperties = { padding: '4px 2px', border: 'none', textAlign: 'center', fontSize: 12 };
 
             return (
               <div style={{ marginTop: 20 }} id="nsrSection">
@@ -1287,13 +1288,13 @@ export default function SwotPage() {
                   </div>
                 </div>
 
-                <div className="card" style={{ overflowX: 'auto', padding: 16 }}>
+                <div className="card nsr-card" style={{ overflowX: 'auto', padding: 16 }}>
                   <div style={{ textAlign: 'center', marginBottom: 12 }}>
                     <div style={{ fontWeight: 700, fontSize: 15 }}>{pairTitle}</div>
                     {pairQuestion && <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>{pairQuestion}</div>}
                   </div>
 
-                  <table style={{ borderCollapse: 'collapse', width: '100%', tableLayout: 'fixed' }}>
+                  <table className="nsr-table" style={{ borderCollapse: 'collapse', width: '100%', minWidth: 320, tableLayout: 'fixed' }}>
                     <colgroup>
                       <col style={{ width: `${Math.round(100 / (colCodes.length + 5))}%` }} />
                       {colCodes.map((cc: string) => <col key={cc} style={{ width: `${Math.round(100 / (colCodes.length + 5))}%` }} />)}
@@ -1308,7 +1309,7 @@ export default function SwotPage() {
                         {colCodes.map((cc: string) => (
                           <th key={cc} style={th}>{cc}</th>
                         ))}
-                        <th style={{ ...th, color: 'var(--text-secondary)' }}>{t('swot.waga')}</th>
+                        <th style={{ ...th, color: 'var(--text-secondary)' }} title={t('swot.waga')}>{t('swot.waga_short')}</th>
                         <th style={th}>N</th>
                         <th style={th}>S</th>
                         <th style={th}>R</th>
@@ -1336,7 +1337,7 @@ export default function SwotPage() {
                         );
                       })}
                       <tr>
-                        <td style={{ ...tdL, color: 'var(--text-secondary)', fontWeight: 700 }}>{t('swot.waga')}</td>
+                        <td style={{ ...tdL, color: 'var(--text-secondary)', fontWeight: 700 }} title={t('swot.waga')}>{t('swot.waga_short')}</td>
                         {colCodes.map((cc: string) => <td key={cc} style={{ ...td, color: 'var(--text-secondary)' }}>{(wMap[cc] || 0).toFixed(2)}</td>)}
                         <td colSpan={4} style={tdE}></td>
                       </tr>
@@ -1424,7 +1425,7 @@ export default function SwotPage() {
                         return (
                           <tr key={pair} className={isDom ? 'dominant' : ''}>
                             <td style={{ textAlign: 'left' }}>
-                              {isDom && <span style={{ marginRight: 6 }}>★</span>}
+                              {isDom && <IconStar size={13} style={{ marginRight: 6, verticalAlign: '-2px', color: 'var(--warning)' }} />}
                               {gn(prg)} / {gn(pcg)} ({pair})
                             </td>
                             <td style={{ textAlign: 'center' }}>{p.total_n}</td>
@@ -1488,7 +1489,7 @@ export default function SwotPage() {
                     const isDom = s.name === lastResult.dominant_strategy;
                     return (
                       <tr key={s.name} className={isDom ? 'dominant' : ''}>
-                        <td>{t('swot.strategy.' + s.name) || s.name}{isDom ? ' ★' : ''}</td>
+                        <td>{t('swot.strategy.' + s.name) || s.name}{isDom && <IconStar size={13} style={{ marginLeft: 6, verticalAlign: '-2px', color: 'var(--warning)' }} />}</td>
                         <td>{s.tables?.join(' + ')}</td>
                         <td>{s.total_n}</td>
                         <td>{s.total_s != null ? +Number(s.total_s).toFixed(2) : ''}</td>
@@ -1510,7 +1511,7 @@ export default function SwotPage() {
           <div style={{ display: 'flex', gap: 10, marginTop: 20, flexWrap: 'wrap' }}>
             <button className="btn btn-secondary" id="exportBtn"
               onClick={async () => { try { await Api.exportSwot(analysisId!, lastResult?.title ? fileSlug(lastResult.title, lastResult.created_at) : undefined); } catch { showToast(t('common.export_error'), 'error'); } }}>
-              {t('common.export_excel')}
+              <IconDownload size={16} />{t('common.export_excel')}
             </button>
             {lastResult.type !== 'swot-tows' && (
               <button className="btn btn-secondary" id="extendBtn"

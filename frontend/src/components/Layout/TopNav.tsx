@@ -3,6 +3,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useSidebar } from '@/context/SidebarContext';
 import { useLang } from '@/context/LangContext';
 import type { Lang } from '@/i18n/i18n';
+import { IconMenu, IconLogo } from '@/components/Icons';
 
 export function TopNav() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export function TopNav() {
   return (
     <nav className="topnav">
       <button className="topnav-burger" id="topBurger" aria-label="Menu" onClick={toggle}>
-        ☰
+        <IconMenu size={22} />
       </button>
       <div
         className="topnav-logo"
@@ -25,7 +26,8 @@ export function TopNav() {
         style={{ cursor: 'pointer' }}
         onClick={() => navigate('/dashboard')}
       >
-        📊 Business Analytics
+        <span className="brand-mark"><IconLogo size={18} /></span>
+        Business Analytics
       </div>
       <div className="topnav-right">
         <span className="topnav-user" id="topNavUser">{userName}</span>

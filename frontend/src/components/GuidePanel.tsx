@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { t } from '@/i18n/i18n';
 
+import { IconLightbulb, IconChevronDown, IconChevronUp } from '@/components/Icons';
 interface GuidePanelProps {
   id: string;
   titleKey: string;
@@ -20,7 +21,7 @@ export function GuidePanel({ id, titleKey, descKey, rulesKeys }: GuidePanelProps
   return (
     <div className="guide-panel">
       <button className="guide-toggle" id={id + 'Btn'} onClick={toggle}>
-        💡 {t('guide.toggle_label')} {open ? '▴' : '▾'}
+        <IconLightbulb size={16} /><span>{t('guide.toggle_label')}</span>{open ? <IconChevronUp size={14} /> : <IconChevronDown size={14} />}
       </button>
       {open && (
         <div className="guide-body" id={id + 'Body'}>

@@ -3,6 +3,7 @@ import { Api, ApiError, TokenStorage } from '@/api/api';
 import { t } from '@/i18n/i18n';
 import type { User } from '@/types/api.types';
 
+import { IconLock } from '@/components/Icons';
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
@@ -84,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             background: 'var(--surface)', borderRadius: 12, padding: '36px 40px',
             maxWidth: 360, width: '90%', textAlign: 'center', boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
           }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>🔒</div>
+            <div style={{ marginBottom: 12, color: 'var(--accent)', display: 'flex', justifyContent: 'center' }}><IconLock size={40} strokeWidth={1.6} /></div>
             <h2 style={{ margin: '0 0 8px', fontSize: 18, color: 'var(--text-primary)' }}>
               {t('auth.session_expired_title')}
             </h2>

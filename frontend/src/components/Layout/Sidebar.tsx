@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { t } from '@/i18n/i18n';
 import { useSidebar } from '@/context/SidebarContext';
+import { IconHome, IconFolder, IconChevronRight, IconUser, IconSettings, IconLogout } from '@/components/Icons';
 
 const ANALYSES = [
   { to: '/analyses/swot',              key: 'analysis.swot' },
@@ -42,7 +43,7 @@ export function Sidebar() {
         className={'nav-item' + (isActive('/dashboard') ? ' active' : '')}
         onClick={() => navTo('/dashboard')}
       >
-        <span className="nav-icon">🏠</span>
+        <span className="nav-icon"><IconHome /></span>
         <span id="nlHome">{t('nav.home')}</span>
       </div>
 
@@ -52,9 +53,9 @@ export function Sidebar() {
           id="nlAnalysesToggle"
           onClick={e => { e.stopPropagation(); setGroupOpen(v => !v); }}
         >
-          <span className="nav-icon">📁</span>
+          <span className="nav-icon"><IconFolder /></span>
           <span id="nlAnalyses">{t('nav.my_analyses')}</span>
-          <span className="nav-arrow">▶</span>
+          <span className="nav-arrow"><IconChevronRight size={14} /></span>
         </div>
         <div className="nav-submenu">
           {ANALYSES.map(a => (
@@ -76,7 +77,7 @@ export function Sidebar() {
         className={'nav-item' + (isActive('/profile') ? ' active' : '')}
         onClick={() => navTo('/profile')}
       >
-        <span className="nav-icon">👤</span>
+        <span className="nav-icon"><IconUser /></span>
         <span id="nlProfile">{t('nav.profile')}</span>
       </div>
 
@@ -84,12 +85,12 @@ export function Sidebar() {
         className={'nav-item' + (isActive('/settings') ? ' active' : '')}
         onClick={() => navTo('/settings')}
       >
-        <span className="nav-icon">⚙️</span>
+        <span className="nav-icon"><IconSettings /></span>
         <span id="nlSettings">{t('nav.settings')}</span>
       </div>
 
       <div className="nav-item" id="logoutBtn" onClick={logout}>
-        <span className="nav-icon">🚪</span>
+        <span className="nav-icon"><IconLogout /></span>
         <span id="nlLogout">{t('nav.logout')}</span>
       </div>
     </aside>

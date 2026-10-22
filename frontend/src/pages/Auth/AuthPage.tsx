@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { t, getLang, setLang } from '@/i18n/i18n';
+import { IconGlobe, IconLogo } from '@/components/Icons';
 
 type FormName = 'login' | 'register' | 'forgot';
 
@@ -90,13 +91,13 @@ export default function AuthPage() {
       <div className="auth-card card">
 
         <div className="auth-lang">
-          <span className="lang-icon">🌐</span>
+          <span className="lang-icon"><IconGlobe size={16} /></span>
           <button id="langEN" className={lang === 'en' ? 'active' : ''} onClick={() => switchLang('en')}>EN</button>
           <button id="langPL" className={lang === 'pl' ? 'active' : ''} onClick={() => switchLang('pl')}>PL</button>
           <button id="langRU" className={lang === 'ru' ? 'active' : ''} onClick={() => switchLang('ru')}>RU</button>
         </div>
 
-        <div className="auth-logo">📊 Business Analytics</div>
+        <div className="auth-logo"><span className="brand-mark"><IconLogo size={20} /></span>Business Analytics</div>
         <div className="auth-subtitle">{t(`auth.subtitle.${form}`)}</div>
 
         {form === 'login' && (

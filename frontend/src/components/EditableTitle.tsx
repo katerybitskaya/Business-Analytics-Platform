@@ -3,6 +3,7 @@ import { Api } from '@/api/api';
 import { useToast } from '@/context/ToastContext';
 import { t } from '@/i18n/i18n';
 
+import { IconPencil } from '@/components/Icons';
 interface Props {
   analysisId: string;
   displayTitle: string;
@@ -76,7 +77,7 @@ export default function EditableTitle({ analysisId, displayTitle, onRenamed }: P
         onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
         onMouseLeave={e => (e.currentTarget.style.opacity = '0.6')}
       >
-        ✎
+        <IconPencil size={14} />
       </button>
     </div>
   );

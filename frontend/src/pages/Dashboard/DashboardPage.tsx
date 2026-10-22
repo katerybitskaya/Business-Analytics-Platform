@@ -5,6 +5,7 @@ import { Api } from '@/api/api';
 import { t, getLang } from '@/i18n/i18n';
 import { getDisplayTitle, typeLabel } from '@/utils/analysisTitle';
 import type { AnalysisOut } from '@/types/api.types';
+import { IconSwot, IconAbc, IconEisenhower, IconSchedule, IconSuppliers, IconCustomers, IconAudit, IconAlert } from '@/components/Icons';
 
 const LIVE_TYPES = new Set(['eisenhower', 'schedule']);
 
@@ -23,13 +24,13 @@ function analysisLabel(a: AnalysisOut): string {
 }
 
 const CARDS = [
-  { href: '/analyses/swot',              icon: '🧭', title: 'SWOT / TOWS',       descKey: 'card.swot.desc' },
-  { href: '/analyses/abc-xyz',           icon: '📦', title: 'ABC / XYZ',         descKey: 'card.abc.desc' },
-  { href: '/analyses/eisenhower',        icon: '🗂️', titleKey: 'analysis.eisenhower', descKey: 'card.eis.desc' },
-  { href: '/analyses/schedule',          icon: '📅', titleKey: 'analysis.schedule',   descKey: 'card.sch.desc' },
-  { href: '/analyses/punktowa-dostawcy', icon: '🚚', titleKey: 'analysis.punktowa_dos', descKey: 'card.dos.desc' },
-  { href: '/analyses/punktowa-odbiorcy', icon: '🤝', titleKey: 'analysis.punktowa_odb', descKey: 'card.odb.desc' },
-  { href: '/analyses/audyt',             icon: '📋', titleKey: 'analysis.audyt',         descKey: 'card.aud.desc' },
+  { href: '/analyses/swot',              icon: IconSwot, title: 'SWOT / TOWS',       descKey: 'card.swot.desc' },
+  { href: '/analyses/abc-xyz',           icon: IconAbc, title: 'ABC / XYZ',         descKey: 'card.abc.desc' },
+  { href: '/analyses/eisenhower',        icon: IconEisenhower, titleKey: 'analysis.eisenhower', descKey: 'card.eis.desc' },
+  { href: '/analyses/schedule',          icon: IconSchedule, titleKey: 'analysis.schedule',   descKey: 'card.sch.desc' },
+  { href: '/analyses/punktowa-dostawcy', icon: IconSuppliers, titleKey: 'analysis.punktowa_dos', descKey: 'card.dos.desc' },
+  { href: '/analyses/punktowa-odbiorcy', icon: IconCustomers, titleKey: 'analysis.punktowa_odb', descKey: 'card.odb.desc' },
+  { href: '/analyses/audyt',             icon: IconAudit, titleKey: 'analysis.audyt',         descKey: 'card.aud.desc' },
 ];
 
 export default function DashboardPage() {
@@ -77,7 +78,7 @@ export default function DashboardPage() {
 
       {showBanner && (
         <div className="banner" id="profileBanner" style={{ display: 'flex' }}>
-          <span id="bannerText">{t('dash.profile_banner')}</span>
+          <span id="bannerText" style={{ display: 'flex', alignItems: 'center', gap: 10 }}><IconAlert size={18} style={{ color: 'var(--warning)' }} />{t('dash.profile_banner')}</span>
           <a className="btn btn-secondary" href="#" id="bannerBtn"
             onClick={e => { e.preventDefault(); navigate('/profile'); }}>
             {t('dash.profile_btn')}
@@ -89,7 +90,7 @@ export default function DashboardPage() {
       <div className="quick-grid">
         {CARDS.map(card => (
           <div key={card.href} className="card quick-card" onClick={() => navigate(card.href)}>
-            <div className="quick-card-icon">{card.icon}</div>
+            <div className="quick-card-icon"><card.icon size={26} /></div>
             <h3>{('title' in card) ? card.title : t((card as any).titleKey)}</h3>
             <p id={`card${card.href.split('/').pop()}Desc`}>{t(card.descKey)}</p>
           </div>

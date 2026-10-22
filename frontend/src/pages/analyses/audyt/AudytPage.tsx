@@ -9,6 +9,7 @@ import type { AnalysisOut } from '@/types/api.types';
 import { Chart, registerables } from 'chart.js';
 import EditableTitle from '@/components/EditableTitle';
 import { getDisplayTitle } from '@/utils/analysisTitle';
+import { IconDownload, IconX } from '@/components/Icons';
 Chart.register(...registerables);
 
 type Section = 'list' | 'setup' | 'scores' | 'results';
@@ -140,7 +141,7 @@ export default function AudytPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => { const t = setTimeout(() => { const el = document.querySelector('.main-content'); if (el) el.scrollTop = 0; }, 0); return () => clearTimeout(t); }, [section]);
+  useEffect(() => { const t = setTimeout(() => { const el = document.querySelector('.main-content'); if (el) el.scrollTop = 0; window.scrollTo(0, 0); }, 0); return () => clearTimeout(t); }, [section]);
 
   useEffect(() => {
     if (mountedRef.current) return;
@@ -265,13 +266,25 @@ export default function AudytPage() {
     const labelColor = getComputedStyle(document.documentElement)
       .getPropertyValue('--text-primary').trim() || '#e0e0e0';
     const numAud = session.num_auditors || 5;
+    const isNarrow = window.innerWidth < 600;
+    const maxLabel = isNarrow ? 12 : 18;
     const wrapLabel = (name: string): string[] => {
-      if (name.length <= 18) return [name];
-      const mid = Math.floor(name.length / 2);
-      const after = name.indexOf(' ', mid);
-      const before = name.lastIndexOf(' ', mid);
-      const splitIdx = after !== -1 && (before === -1 || after - mid <= mid - before) ? after : before;
-      return splitIdx > 0 ? [name.slice(0, splitIdx), name.slice(splitIdx + 1)] : [name];
+      if (name.length <= maxLabel) return [name];
+      if (!isNarrow) {
+        const mid = Math.floor(name.length / 2);
+        const after = name.indexOf(' ', mid);
+        const before = name.lastIndexOf(' ', mid);
+        const splitIdx = after !== -1 && (before === -1 || after - mid <= mid - before) ? after : before;
+        return splitIdx > 0 ? [name.slice(0, splitIdx), name.slice(splitIdx + 1)] : [name];
+      }
+      const lines: string[] = [];
+      let cur = '';
+      for (const word of name.split(' ')) {
+        if (cur && (cur + ' ' + word).length > maxLabel) { lines.push(cur); cur = word; }
+        else cur = cur ? cur + ' ' + word : word;
+      }
+      if (cur) lines.push(cur);
+      return lines;
     };
     const labels = criteriaResults.map((r: any) => wrapLabel(r.criterion_name));
     const data = criteriaResults.map((r: any) => {
@@ -311,10 +324,10 @@ export default function AudytPage() {
             grid: { color: 'rgba(128,128,128,0.2)' },
             angleLines: { color: 'rgba(128,128,128,0.2)' },
             ticks: { display: true, stepSize: 20, backdropColor: 'transparent', font: { size: 9 }, color: 'rgba(128,128,128,0.7)' },
-            pointLabels: { font: { size: 9 }, color: labelColor, padding: 8 },
+            pointLabels: { font: { size: isNarrow ? 8 : 9 }, color: labelColor, padding: isNarrow ? 4 : 8 },
           },
         },
-        layout: { padding: 20 },
+        layout: { padding: isNarrow ? 4 : 20 },
         plugins: {
           legend: { display: false },
           tooltip: { callbacks: { label: (ctx: any) => ` ${ctx.parsed.r}%` } },
@@ -444,7 +457,7 @@ export default function AudytPage() {
                     placeholder={t('aud.criterion_name_ph')}
                     onChange={e => setCriteria(prev => prev.map((x, i) => i === idx ? { ...x, name: e.target.value } : x))} />
                   <button className="btn btn-secondary"
-                    onClick={() => setCriteria(prev => prev.filter((_, i) => i !== idx))}>✕</button>
+                    onClick={() => setCriteria(prev => prev.filter((_, i) => i !== idx))} aria-label="Remove"><IconX size={14} /></button>
                 </div>
               ))}
             </div>
@@ -768,14 +781,14 @@ export default function AudytPage() {
             </div>
 
             {secDiv(t('aud.sec_chart'))}
-            <div className="chart-card" style={{ marginTop: 16, padding: 20, width: 440 }}>
+            <div className="chart-card" style={{ marginTop: 16, padding: 12, width: '100%', maxWidth: 440 }}>
               <canvas id="radarChart" ref={radarRef} />
             </div>
 
             <div style={{ display: 'flex', gap: 12, marginTop: 24, flexWrap: 'wrap' }}>
               <button className="btn btn-secondary" id="exportBtn" onClick={async () => {
                 try { await Api.exportAudyt(analysisId!, list.find(a => a.id === analysisId)?.title ? fileSlug(list.find(a => a.id === analysisId)!.title, list.find(a => a.id === analysisId)!.created_at) : undefined); } catch { showToast(t('common.export_error'), 'error'); }
-              }}>{t('common.export_excel')}</button>
+              }}><IconDownload size={16} />{t('common.export_excel')}</button>
               <button className="btn btn-secondary" style={{ color: 'var(--danger)' }}
                 onClick={async () => {
                   if (!confirm(t('aud.confirm_delete'))) return;

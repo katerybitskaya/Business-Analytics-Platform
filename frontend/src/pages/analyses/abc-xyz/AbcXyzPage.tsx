@@ -9,6 +9,7 @@ import type { AnalysisOut, AbcXyzResultOut } from '@/types/api.types';
 import EditableTitle from '@/components/EditableTitle';
 import { getDisplayTitle } from '@/utils/analysisTitle';
 
+import { IconDownload, IconX } from '@/components/Icons';
 type Section = 'list' | 'edit' | 'results';
 type EditItem = { name: string; quantity: string; unit_cost: string };
 
@@ -142,7 +143,7 @@ export default function AbcXyzPage() {
   }, []);
 
   useEffect(() => {
-    const id = setTimeout(() => { const el = document.querySelector('.main-content'); if (el) el.scrollTop = 0; }, 0);
+    const id = setTimeout(() => { const el = document.querySelector('.main-content'); if (el) el.scrollTop = 0; window.scrollTo(0, 0); }, 0);
     return () => clearTimeout(id);
   }, [section]);
 
@@ -179,6 +180,7 @@ export default function AbcXyzPage() {
     try {
       const data = await Api.getAbcXyz(id);
       setAnalysisId(id);
+      setPeriod(data.period_label || '');
       if (data.items.length > 0 && (data.items[0] as any).abc_class) {
         setResult(data as any);
         clearDraft();
@@ -351,7 +353,7 @@ export default function AbcXyzPage() {
                           }} />
                       </td>
                       <td style={{ padding: '4px 8px' }}>
-                        <button className="btn btn-secondary" onClick={() => removeItem(idx)}>✕</button>
+                        <button className="btn btn-secondary" onClick={() => removeItem(idx)} aria-label="Remove"><IconX size={14} /></button>
                       </td>
                     </tr>
                   ))}
@@ -383,6 +385,11 @@ export default function AbcXyzPage() {
           }}>
             {t('abc.results_title')}
           </h2>
+          {period && (
+            <p id="abcResultsPeriod" style={{ color: 'var(--text-secondary)', fontSize: 13, marginTop: 4 }}>
+              {t('abc.period_short')}: <b style={{ color: 'var(--text-primary)' }}>{period}</b>
+            </p>
+          )}
           <GuidePanel id="guideAbc2" titleKey="guide.abc.step2.title" descKey="guide.abc.step2.desc" rulesKeys={['guide.abc.step2.r1', 'guide.abc.step2.r2', 'guide.abc.step2.r3', 'guide.abc.step2.r4']} />
 
           {secDiv(t('abc.full_table'))}
@@ -468,7 +475,7 @@ export default function AbcXyzPage() {
           <div style={{ display: 'flex', gap: 10, marginTop: 32, flexWrap: 'wrap' }}>
             <button className="btn btn-secondary" id="exportBtn"
               onClick={() => Api.exportAbcXyz(analysisId!, result.title ? fileSlug(result.title, result.created_at) : undefined)}>
-              {t('common.export_excel')}
+              <IconDownload size={16} />{t('common.export_excel')}
             </button>
             <button className="btn btn-secondary" id="deleteBtn" style={{ color: 'var(--danger)' }}
               disabled={busy} onClick={handleDeleteResult}>
