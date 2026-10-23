@@ -13,7 +13,6 @@ DefaultDirName={autopf}\{#AppName}
 DefaultGroupName={#AppName}
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
-PrivilegesRequiredOverridesAllowed=dialog
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 OutputDir=dist
@@ -31,11 +30,6 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "polish";  MessagesFile: "compiler:Languages\Polish.isl"
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl"
 
-[CustomMessages]
-english.DeleteDataQuestion=Also delete your data (database, settings, avatars)?%n%n%1%n%nThis cannot be undone.
-polish.DeleteDataQuestion=Usunąć również Twoje dane (baza danych, ustawienia, awatary)?%n%n%1%n%nTej operacji nie można cofnąć.
-russian.DeleteDataQuestion=Удалить также ваши данные (база данных, настройки, аватары)?%n%n%1%n%nЭто действие нельзя отменить.
-
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 
@@ -49,16 +43,5 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: deskto
 [Run]
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags: nowait postinstall skipifsilent
 
-[Code]
-procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
-var
-  DataDir: String;
-begin
-  if CurUninstallStep = usPostUninstall then
-  begin
-    DataDir := ExpandConstant('{localappdata}\{#AppDataFolder}');
-    if DirExists(DataDir) then
-      if SuppressibleMsgBox(FmtMessage(CustomMessage('DeleteDataQuestion'), [DataDir]), mbConfirmation, MB_YESNO or MB_DEFBUTTON2, IDNO) = IDYES then
-        DelTree(DataDir, True, True, True);
-  end;
-end;
+[UninstallDelete]
+Type: filesandordirs; Name: "{localappdata}\{#AppDataFolder}"

@@ -121,6 +121,11 @@ def initial_window_size(webview) -> tuple[int, int]:
 
 
 def main() -> None:
+    if sys.stdout is None:
+        sys.stdout = open(os.devnull, "w", encoding="utf-8")
+    if sys.stderr is None:
+        sys.stderr = open(os.devnull, "w", encoding="utf-8")
+
     data_dir = app_data_dir()
     env_path = data_dir / ".env"
     ensure_env_file(env_path)
