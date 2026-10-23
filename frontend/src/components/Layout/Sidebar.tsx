@@ -16,7 +16,7 @@ const ANALYSES = [
 ];
 
 export function Sidebar() {
-  const { logout } = useAuth();
+  const { logout, isDesktop } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { isOpen, toggle } = useSidebar();
@@ -81,18 +81,22 @@ export function Sidebar() {
         <span id="nlProfile">{t('nav.profile')}</span>
       </div>
 
-      <div
-        className={'nav-item' + (isActive('/settings') ? ' active' : '')}
-        onClick={() => navTo('/settings')}
-      >
-        <span className="nav-icon"><IconSettings /></span>
-        <span id="nlSettings">{t('nav.settings')}</span>
-      </div>
+      {!isDesktop && (
+        <div
+          className={'nav-item' + (isActive('/settings') ? ' active' : '')}
+          onClick={() => navTo('/settings')}
+        >
+          <span className="nav-icon"><IconSettings /></span>
+          <span id="nlSettings">{t('nav.settings')}</span>
+        </div>
+      )}
 
-      <div className="nav-item" id="logoutBtn" onClick={logout}>
-        <span className="nav-icon"><IconLogout /></span>
-        <span id="nlLogout">{t('nav.logout')}</span>
-      </div>
+      {!isDesktop && (
+        <div className="nav-item" id="logoutBtn" onClick={logout}>
+          <span className="nav-icon"><IconLogout /></span>
+          <span id="nlLogout">{t('nav.logout')}</span>
+        </div>
+      )}
     </aside>
   );
 }

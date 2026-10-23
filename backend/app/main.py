@@ -73,6 +73,14 @@ async def _guest_reset_loop() -> None:
 
 @app.on_event("startup")
 async def _startup_guest_seed() -> None:
+    if settings.is_desktop:
+        from app.core.desktop import ensure_local_user
+
+        async with AsyncSessionLocal() as db:
+            user = await ensure_local_user(db)
+        logger.info("desktop_local_user_ready user_id=%s", user.id)
+        return
+
     from app.scripts.seed_guest import ensure_guest_seeded
 
     async with AsyncSessionLocal() as db:

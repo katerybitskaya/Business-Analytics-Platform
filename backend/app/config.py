@@ -55,6 +55,10 @@ class Settings(BaseSettings):
     def is_production(self) -> bool:
         return self.app_env == "production"
 
+    @property
+    def is_desktop(self) -> bool:
+        return self.app_env == "desktop"
+
 
 @lru_cache
 def get_settings() -> Settings:

@@ -215,6 +215,15 @@ export const Api = {
   register: (data: RegisterData) => apiRequest<User>('/api/auth/register', { method: 'POST', body: data, auth: false }),
   login: (data: LoginData) => apiRequest<TokenPair>('/api/auth/login', { method: 'POST', body: data, auth: false }),
   me: () => apiRequest<User>('/api/auth/me'),
+  isDesktop: async (): Promise<boolean> => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/health`);
+      const data = await res.json();
+      return data?.env === 'desktop';
+    } catch {
+      return false;
+    }
+  },
   logout: () => { TokenStorage.clear(); window.location.href = '/'; },
   changePassword: (data: { old_password: string; new_password: string }) =>
     apiRequest('/api/auth/password/change', { method: 'POST', body: data }),

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.middleware.auth_middleware import get_current_user
+from app.middleware.auth_middleware import get_current_user, web_only
 from app.middleware.rate_limit_middleware import check_login_attempt
 from app.models.user import User
 from app.schemas.user import (
@@ -20,14 +20,14 @@ from app.services.auth_service import AuthService
 router = APIRouter()
 
 
-@router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
+@router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED, dependencies=[Depends(web_only)])
 async def register(data: UserRegister, db: AsyncSession = Depends(get_db)):
     service = AuthService(db)
     user = await service.register(data)
     return user
 
 
-@router.post("/login", response_model=TokenPair)
+@router.post("/login", response_model=TokenPair, dependencies=[Depends(web_only)])
 async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
     if not check_login_attempt(data.login):
         raise HTTPException(
@@ -40,13 +40,13 @@ async def login(data: UserLogin, db: AsyncSession = Depends(get_db)):
     return await service.issue_tokens(user)
 
 
-@router.post("/refresh", response_model=TokenPair)
+@router.post("/refresh", response_model=TokenPair, dependencies=[Depends(web_only)])
 async def refresh(data: RefreshRequest, db: AsyncSession = Depends(get_db)):
     service = AuthService(db)
     return await service.refresh_access_token(data.refresh_token)
 
 
-@router.post("/password/change", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/password/change", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(web_only)])
 async def change_password(
     data: PasswordChange,
     current_user: User = Depends(get_current_user),
@@ -56,13 +56,13 @@ async def change_password(
     await service.change_password(current_user.id, data.old_password, data.new_password)
 
 
-@router.post("/password/reset-request", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/password/reset-request", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(web_only)])
 async def request_password_reset(data: PasswordResetRequest, db: AsyncSession = Depends(get_db)):
     service = AuthService(db)
     await service.request_password_reset(data.email)
 
 
-@router.post("/password/reset-confirm", status_code=status.HTTP_204_NO_CONTENT)
+@router.post("/password/reset-confirm", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(web_only)])
 async def confirm_password_reset(data: PasswordResetConfirm, db: AsyncSession = Depends(get_db)):
     service = AuthService(db)
     await service.confirm_password_reset(data.token, data.new_password)

@@ -7,6 +7,7 @@ import { IconLock } from '@/components/Icons';
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
+  isDesktop: boolean;
   login: (tokens: { access_token: string; refresh_token: string }) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -22,6 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [sessionExpired, setSessionExpired] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   const refreshUser = useCallback(async () => {
     try {
@@ -40,13 +42,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (TokenStorage.getAccess()) {
-      devLog('token found — loading user…');
-      refreshUser().finally(() => setLoading(false));
-    } else {
-      devLog('no token — guest');
+    (async () => {
+      if (TokenStorage.getAccess()) {
+        devLog('token found — loading user…');
+        await refreshUser();
+      } else if (await Api.isDesktop()) {
+        devLog('desktop mode — loading local user…');
+        setIsDesktop(true);
+        await refreshUser();
+      } else {
+        devLog('no token — guest');
+      }
       setLoading(false);
-    }
+    })();
   }, [refreshUser]);
 
   useEffect(() => {
@@ -73,7 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, isDesktop, login, logout, refreshUser }}>
       {children}
       {sessionExpired && (
         <div style={{

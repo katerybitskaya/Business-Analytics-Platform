@@ -105,7 +105,7 @@ The guest account and demo data are created automatically on the backend's first
 
 ## Desktop app (Windows)
 
-A standalone `.exe` version of the platform: the same backend and frontend, running locally and shown in its own window instead of a browser. It uses SQLite, so no PostgreSQL setup is needed — the database and settings are created automatically on first run in `%LOCALAPPDATA%\BusinessAnalyticsPlatform`.
+A standalone `.exe` version of the platform: the same backend and frontend, running locally and shown in its own window instead of a browser. It uses SQLite, so no PostgreSQL setup is needed — the database and settings are created automatically on first run in `%LOCALAPPDATA%\BusinessAnalyticsPlatform`. It is a single-user app: no login or accounts — the backend runs in desktop mode (`APP_ENV=desktop`) and works as one local user created on first start.
 
 **Tools:** Python, FastAPI + Uvicorn, SQLite (aiosqlite), pywebview (WebView2), PyInstaller.
 

@@ -23,7 +23,7 @@ const INDUSTRIES = [
 ];
 
 export default function ProfilePage() {
-  const { refreshUser } = useAuth();
+  const { refreshUser, isDesktop } = useAuth();
   const { showToast } = useToast();
   const [user, setUser] = useState<User | null>(null);
   const [firstName, setFirstName] = useState('');
@@ -166,10 +166,12 @@ export default function ProfilePage() {
               <label>{t('profile.last_name')}</label>
               <input className="input" id="lastName" value={lastName} onChange={e => setLastName(e.target.value)} />
             </div>
-            <div className="field">
-              <label>{t('profile.email_lbl')}</label>
-              <input className="input" id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
-            </div>
+            {!isDesktop && (
+              <div className="field">
+                <label>{t('profile.email_lbl')}</label>
+                <input className="input" id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
+              </div>
+            )}
             <button className="btn btn-primary" id="saveAccountBtn" onClick={handleSaveAccount}>{t('common.save')}</button>
           </div>
         </div>

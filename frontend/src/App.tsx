@@ -53,7 +53,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   useLang();
-  const { user, loading } = useAuth();
+  const { user, loading, isDesktop } = useAuth();
   const location = useLocation();
   useEffect(() => {
     if (import.meta.env.DEV) {
@@ -68,7 +68,7 @@ export default function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={user ? <Navigate to="/dashboard" replace /> : <AuthPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/reset-password" element={isDesktop ? <Navigate to="/" replace /> : <ResetPasswordPage />} />
 
         <Route path="/dashboard" element={
           <ProtectedRoute><AppLayout><DashboardPage /></AppLayout></ProtectedRoute>
@@ -77,7 +77,8 @@ export default function App() {
           <ProtectedRoute><AppLayout><ProfilePage /></AppLayout></ProtectedRoute>
         } />
         <Route path="/settings" element={
-          <ProtectedRoute><AppLayout><SettingsPage /></AppLayout></ProtectedRoute>
+          isDesktop ? <Navigate to="/dashboard" replace />
+            : <ProtectedRoute><AppLayout><SettingsPage /></AppLayout></ProtectedRoute>
         } />
         <Route path="/analyses/swot" element={
           <ProtectedRoute><AppLayout><SwotPage /></AppLayout></ProtectedRoute>

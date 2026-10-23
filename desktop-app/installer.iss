@@ -1,10 +1,4 @@
-﻿; Inno Setup script — установщик для BusinessAnalyticsPlatform.exe
-; Требуется Inno Setup 6.3+ (https://jrsoftware.org/isinfo.php)
-; Сборка: сначала `pyinstaller build.spec`, затем открыть этот файл в Inno Setup и нажать Compile
-;         (или из консоли: "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss)
-; Результат: dist\BusinessAnalyticsPlatformSetup.exe
-
-#define AppName "Business Analytics Platform"
+﻿#define AppName "Business Analytics Platform"
 #define AppVersion "1.0.0"
 #define AppPublisher "Katsiaryna Rybitskaya"
 #define AppExeName "BusinessAnalyticsPlatform.exe"
@@ -18,8 +12,6 @@ AppPublisher={#AppPublisher}
 DefaultDirName={autopf}\{#AppName}
 DefaultGroupName={#AppName}
 DisableProgramGroupPage=yes
-; установка для текущего пользователя без прав администратора
-; (база в %LOCALAPPDATA% тоже принадлежит текущему пользователю)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 ArchitecturesAllowed=x64compatible
@@ -58,9 +50,6 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: deskto
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags: nowait postinstall skipifsilent
 
 [Code]
-// После удаления программы спросить, удалять ли данные пользователя
-// (%LOCALAPPDATA%\BusinessAnalyticsPlatform: app.db, .env, uploads).
-// При тихом удалении (/SILENT) данные сохраняются.
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var
   DataDir: String;

@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.middleware.auth_middleware import get_current_user
+from app.middleware.auth_middleware import get_current_user, web_only
 from app.models.user import User
 from app.repositories.user_repository import UserRepository
 from app.schemas.user import EmailChangeRequest, UserOut, UserProfileOut, UserProfileUpdate, UserUpdate
@@ -107,7 +107,7 @@ async def delete_avatar(
     return updated
 
 
-@router.patch("/me/email", response_model=UserOut)
+@router.patch("/me/email", response_model=UserOut, dependencies=[Depends(web_only)])
 async def change_my_email(
     data: EmailChangeRequest,
     current_user: User = Depends(get_current_user),
@@ -124,7 +124,7 @@ async def change_my_email(
     return updated
 
 
-@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/me", status_code=status.HTTP_204_NO_CONTENT, dependencies=[Depends(web_only)])
 async def delete_my_account(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),

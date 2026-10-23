@@ -98,11 +98,15 @@ def mount_frontend(fastapi_app, dist_dir: Path) -> None:
     fastapi_app.mount("/", StaticFiles(directory=str(dist_dir), html=True), name="frontend")
 
 
+WEB_ONLY_TABLES = {"refresh_tokens", "password_reset_tokens"}
+
+
 async def create_sqlite_schema() -> None:
     from app.database import Base, engine
 
+    tables = [t for t in Base.metadata.sorted_tables if t.name not in WEB_ONLY_TABLES]
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(lambda sync_conn: Base.metadata.create_all(sync_conn, tables=tables))
 
 
 def main() -> None:
