@@ -109,6 +109,17 @@ async def create_sqlite_schema() -> None:
         await conn.run_sync(lambda sync_conn: Base.metadata.create_all(sync_conn, tables=tables))
 
 
+def initial_window_size(webview) -> tuple[int, int]:
+    width, height = 1440, 900
+    try:
+        screen = webview.screens[0]
+        width = min(width, int(screen.width * 0.9))
+        height = min(height, int(screen.frame.Height * 0.9))
+    except Exception:
+        pass
+    return max(width, 1024), max(height, 640)
+
+
 def main() -> None:
     data_dir = app_data_dir()
     env_path = data_dir / ".env"
@@ -141,13 +152,15 @@ def main() -> None:
 
     import webview
 
+    width, height = initial_window_size(webview)
     webview.create_window(
         "Business Analytics Platform",
         f"http://127.0.0.1:{port}",
-        width=1440,
-        height=900,
+        width=width,
+        height=height,
         min_size=(1024, 640),
         resizable=True,
+        maximized=True,
     )
     webview.start()
 
